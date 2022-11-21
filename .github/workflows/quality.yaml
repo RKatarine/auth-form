@@ -1,0 +1,38 @@
+name: Quality
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  lint-check:
+    runs-on:
+      - self-hosted
+      - Linux
+      - node
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          # Fetch all git history so that yarn workspaces --since can compare with the correct commits
+          # @link https://github.com/actions/checkout#fetch-all-history-for-all-tags-and-branches
+          fetch-depth: 0
+
+      - name: Set up Node.js ⚙️
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          cache: 'yarn'
+          cache-dependency-path: yarn.lock
+
+      - name: Install 🔧
+        working-directory: .
+        run: yarn
+
+      - name: Run ESLint 🌸
+        working-directory: .
+        run: yarn lint

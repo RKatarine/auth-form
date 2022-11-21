@@ -1,0 +1,111 @@
+{
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "plugins": ["prettier", "boundaries"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "extends": [
+        "airbnb",
+        "airbnb/hooks",
+        "airbnb-typescript",
+        "prettier",
+        "plugin:boundaries/recommended"
+      ],
+      "parserOptions": {
+        "project": "./tsconfig.json"
+      },
+      "settings": {
+        "import/parsers": {
+          "@typescript-eslint/parser": [".ts", ".tsx"]
+        },
+        "import/resolver": {
+          "typescript": {
+            "alwaysTryTypes": true,
+            // always try to resolve types under `<root>@types` directory even it doesn't contain any source code, like `@types/unist`
+            "project": "./tsconfig.json"
+          }
+        },
+        "boundaries/elements": [
+          {
+            "type": "app",
+            "pattern": ["src/app/*", "src/app/"]
+          },
+          {
+            "type": "pages",
+            "pattern": ["src/pages/*", "src/pages/"]
+          },
+          {
+            "type": "widgets",
+            "pattern": ["src/widgets/*", "src/widgets/"]
+          },
+          {
+            "type": "features",
+            "pattern": ["src/features/*", "src/features/"]
+          },
+          {
+            "type": "entities",
+            "pattern": ["src/entities/*", "src/entities/"]
+          },
+          {
+            "type": "shared",
+            "pattern": ["src/shared/*", "src/shared/"]
+          }
+        ]
+      },
+      "rules": {
+        "@typescript-eslint/no-use-before-define": [
+          "error",
+          {
+            "functions": false
+          }
+        ],
+        "boundaries/element-types": [
+          2,
+          {
+            "default": "disallow",
+            "message": "${file.type} is not allowed to import ${dependency.type}",
+            "rules": [
+              {"from": "app", "allow": ["pages", "widgets", "features", "entities", "shared"]},
+              {"from": "entities", "allow": ["entities", "shared"]},
+              {"from": "features", "allow": ["entities", "shared"]},
+              {"from": "pages", "allow": ["widgets", "features", "entities", "shared"]},
+              {"from": "shared", "allow": ["shared"]},
+              {"from": "widgets", "allow": ["widgets", "features", "entities", "shared"]}
+            ]
+          }
+        ],
+        "class-methods-use-this": "warn",
+        "consistent-return": "warn",
+        "import/no-default-export": "warn",
+        "import/no-extraneous-dependencies": "warn",
+        "import/prefer-default-export": "off",
+        "jsx-a11y/label-has-associated-control": "warn",
+        "no-nested-ternary": "warn",
+        "no-underscore-dangle": "warn",
+        "react/function-component-definition": "off",
+        "react/jsx-props-no-spreading": "off",
+        "react/no-unescaped-entities": "warn",
+        "react/prop-types": "warn",
+        "react/react-in-jsx-scope": "off",
+        "react/require-default-props": "off",
+        "react/destructuring-assignment": "off"
+      }
+    },
+    {
+      "files": "*.js",
+      "parserOptions": {
+        "sourceType": "module",
+        "ecmaVersion": 2021
+      }
+    },
+    {
+      "files": ["vite.config.js"],
+      "rules": {
+        "import/no-extraneous-dependencies": "off"
+      }
+    }
+  ]
+}
